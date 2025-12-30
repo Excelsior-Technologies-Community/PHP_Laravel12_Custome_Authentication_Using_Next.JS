@@ -1,59 +1,262 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PHP_Laravel12_Custome_Authentication_Using_Next.JS
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Custom customer authentication system built using Laravel 12 as a REST API backend and Next.js as the frontend application. This project demonstrates a complete authentication flow including user registration, login, protected dashboard access, profile retrieval, logout functionality, and JWT-based authentication without using Laravel Breeze or Sanctum.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+This project is designed for beginners and intermediate developers who want to understand how to connect a Laravel API with a modern Next.js frontend using JWT authentication. It follows a clean separation of backend and frontend responsibilities and uses industry-standard practices.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Technology Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Backend (API)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+* PHP 8.2 or higher
+* Laravel 12
+* MySQL Database
+* JWT Authentication using tymon/jwt-auth
+* RESTful API architecture
 
-## Laravel Sponsors
+### Frontend
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+* Next.js 14 (App Router)
+* React Hooks
+* Fetch API for HTTP requests
+* LocalStorage and SessionStorage for token handling
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Project Structure
 
-## Contributing
+PHP_Laravel12_Custome_Authentication_Using_Next.JS/
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+├── laravel-backend/
+│   ├── app/
+│   ├── routes/
+│   ├── database/
+│   ├── config/
+│   └── .env
+│
+└── nextjs-frontend/
+├── app/
+├── components/
+├── services/
+└── package.json
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Features
 
-## Security Vulnerabilities
+* Customer registration
+* Customer login
+* JWT-based authentication
+* Protected dashboard route
+* User profile API
+* Remember me option
+* Logout functionality
+* Secure API and frontend integration
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## Requirements
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Make sure the following tools are installed:
+
+* PHP 8.2 or higher
+* Composer
+* MySQL
+* Node.js 18 or higher
+* npm
+
+Verify versions:
+
+php -v
+composer -v
+node -v
+npm -v
+
+---
+
+## Backend Setup (Laravel 12)
+
+### Step 1: Navigate to Backend Directory
+
+cd laravel-backend
+
+### Step 2: Install Dependencies
+
+composer install
+
+### Step 3: Create Environment File
+
+cp .env.example .env
+
+### Step 4: Configure Database
+
+Update .env file:
+
+APP_URL=[http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel_next_auth
+DB_USERNAME=root
+DB_PASSWORD=
+
+### Step 5: Generate Application Key
+
+php artisan key:generate
+
+### Step 6: Generate JWT Secret Key
+
+php artisan jwt:secret
+
+### Step 7: Run Database Migrations
+
+php artisan migrate
+
+### Step 8: Start Laravel Development Server
+
+php artisan serve
+
+Backend URL:
+
+[http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+---
+
+## API Endpoints
+
+Method | Endpoint | Description
+POST | /api/register | Register new user
+POST | /api/login | Login user
+GET | /api/profile | Get authenticated user profile
+POST | /api/logout | Logout user
+
+All protected routes require Authorization header:
+
+Authorization: Bearer YOUR_JWT_TOKEN
+
+---
+
+## Frontend Setup (Next.js)
+
+### Step 1: Open New Terminal
+
+### Step 2: Navigate to Frontend Directory
+
+cd nextjs-frontend
+
+### Step 3: Install Node Dependencies
+
+npm install
+
+### Step 4: Start Next.js Development Server
+
+npm run dev
+
+Frontend URL:
+
+[http://localhost:3000](http://localhost:3000)
+
+---
+
+## Frontend Application Routes
+
+Route | Description
+/register | User registration page
+/login | User login page
+/dashboard | Protected dashboard page
+/login | Redirect if user is not authenticated
+
+---
+
+## Authentication Flow
+
+1. User registers or logs in using the frontend
+2. Laravel API validates credentials
+3. JWT token is returned in response
+4. Token is stored in:
+
+   * localStorage when Remember Me is selected
+   * sessionStorage for normal login
+5. Token is attached to every protected API request
+6. Backend validates token before allowing access
+
+---
+
+## Logout Flow
+
+* JWT token is removed from browser storage
+* User session is cleared
+* User is redirected to login page
+
+---
+
+## Common Errors and Fixes
+
+### Dashboard Page Not Found
+
+Ensure dashboard file exists:
+
+app/dashboard/page.js
+
+### Unauthorized Error (401)
+
+* Ensure user is logged in
+* Verify token exists in storage
+* Check Authorization header
+
+### CORS Error
+
+Update config/cors.php:
+
+allowed_origins => ['http://localhost:3000']
+
+Then run:
+
+php artisan config:clear
+---
+## Screenshot
+<img width="1000" height="913" alt="image" src="https://github.com/user-attachments/assets/44350714-6813-43ac-86f8-9591fec46245" />
+<img width="850" height="938" alt="image" src="https://github.com/user-attachments/assets/0caf5ef0-5f03-4f52-b947-ec54ebf7d9fa" />
+<img width="1889" height="961" alt="image" src="https://github.com/user-attachments/assets/267740b6-050b-4650-8a67-73e4e90fac5a" />
+
+
+
+
+### JWT Errors
+
+Run the following commands:
+
+php artisan jwt:secret
+php artisan config:clear
+
+---
+
+## Security Considerations
+
+* Passwords are hashed using Laravel's Hash mechanism
+* JWT tokens protect API endpoints
+* Sensitive routes are authenticated
+* Input validation handled server-side
+
+---
+
+## Future Enhancements
+
+* Cookie-based authentication
+* Refresh token implementation
+* Role-based access control
+* Middleware protection in Next.js
+* Deployment documentation
+
+---
+
+## Conclusion
+
+This project provides a clean and practical example of implementing custom authentication using Laravel 12 and Next.js. It is suitable for learning purposes, academic projects, and as a foundation for real-world applications.
