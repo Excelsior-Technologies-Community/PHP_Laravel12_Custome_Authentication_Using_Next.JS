@@ -38,4 +38,7 @@ Route::middleware('auth:customer')->group(function () {
 
     // Login History
     Route::get('/login-history', [DashboardController::class, 'loginHistory']);
+
+    // Security Dashboard
+    Route::get('/security-dashboard', [DashboardController::class, 'security']);
 });
