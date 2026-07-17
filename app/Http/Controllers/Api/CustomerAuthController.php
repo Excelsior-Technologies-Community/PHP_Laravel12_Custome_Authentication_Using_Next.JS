@@ -24,7 +24,8 @@ class CustomerAuthController extends Controller
         $customer = Customer::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'password_changed_at' => now(),
         ]);
 
         return response()->json([
@@ -44,16 +45,57 @@ class CustomerAuthController extends Controller
             'password' => 'required'
         ]);
 
-        $credentials = $request->only('email', 'password');
+        $customer = Customer::where('email', $request->email)->first();
 
-        if (!$token = auth('customer')->attempt($credentials)) {
+        // Customer not found
+        if (!$customer) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid Credentials'
             ], 401);
         }
 
-        $customer = auth('customer')->user();
+        // Check account lock
+        if ($customer->isLocked()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Account is locked due to multiple failed login attempts.',
+                'locked_until' => $customer->locked_until->format('Y-m-d H:i:s')
+            ], 423);
+        }
+
+        // Wrong password
+        if (!Hash::check($request->password, $customer->password)) {
+
+            $customer->incrementFailedAttempts();
+
+            $remainingAttempts = max(0, 5 - $customer->failed_attempts);
+
+            if ($customer->isLocked()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Too many failed attempts. Account locked for 10 minutes.',
+                    'locked_until' => $customer->locked_until->format('Y-m-d H:i:s')
+                ], 423);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid Credentials',
+                'remaining_attempts' => $remainingAttempts
+            ], 401);
+        }
+
+        // Generate JWT Token
+        if (!$token = auth('customer')->attempt($request->only('email', 'password'))) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to login'
+            ], 401);
+        }
+
+        // Reset failed attempts
+        $customer->resetFailedAttempts();
 
         // Store Login History
         LoginHistory::create([
@@ -67,7 +109,7 @@ class CustomerAuthController extends Controller
             'success' => true,
             'message' => 'Login Successful',
             'token' => $token,
-            'customer' => $customer
+            'customer' => auth('customer')->user()
         ]);
     }
 
@@ -115,7 +157,17 @@ class CustomerAuthController extends Controller
 
         $request->validate([
             'current_password' => 'required',
-            'password' => 'required|confirmed|min:6'
+            'password' => [
+                'required',
+                'confirmed',
+                'min:8',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&]/'
+            ]
+        ], [
+            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character.'
         ]);
 
         if (!Hash::check($request->current_password, $customer->password)) {
@@ -125,8 +177,10 @@ class CustomerAuthController extends Controller
             ], 400);
         }
 
-        $customer->password = Hash::make($request->password);
-        $customer->save();
+        $customer->update([
+            'password' => Hash::make($request->password),
+            'password_changed_at' => now(),
+        ]);
 
         return response()->json([
             'success' => true,
@@ -141,7 +195,6 @@ class CustomerAuthController extends Controller
     {
         $customer = auth('customer')->user();
 
-        // Update latest login history
         $history = LoginHistory::where('customer_id', $customer->id)
             ->whereNull('logout_at')
             ->latest()
