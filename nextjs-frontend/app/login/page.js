@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { login } from "../../services/api";
 
 export default function LoginPage() {
@@ -147,17 +148,36 @@ export default function LoginPage() {
                         )}
                     </div>
 
-                    <div style={{ marginBottom: 20 }}>
-                        <input
-                            type="checkbox"
-                            name="remember"
-                            checked={formData.remember}
-                            onChange={handleChange}
-                        />
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginBottom: 20,
+                        }}
+                    >
+                        <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                            <input
+                                type="checkbox"
+                                name="remember"
+                                checked={formData.remember}
+                                onChange={handleChange}
+                            />
+                            <span style={{ marginLeft: 8 }}>
+                                Remember Me
+                            </span>
+                        </label>
 
-                        <span style={{ marginLeft: 10 }}>
-                            Remember Me
-                        </span>
+                        <Link
+                            href="/forgot-password"
+                            style={{
+                                color: "#0d6efd",
+                                fontSize: "14px",
+                                textDecoration: "none",
+                            }}
+                        >
+                            Forgot Password?
+                        </Link>
                     </div>
 
                     <button

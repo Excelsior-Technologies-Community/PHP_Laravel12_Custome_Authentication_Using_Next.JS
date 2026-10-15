@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\DashboardController;
 
 Route::post('/register', [CustomerAuthController::class, 'register']);
 Route::post('/login', [CustomerAuthController::class, 'login']);
+Route::post('/forgot-password', [CustomerAuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [CustomerAuthController::class, 'resetPassword']);
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +21,7 @@ Route::post('/login', [CustomerAuthController::class, 'login']);
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth:customer')->group(function () {
+Route::middleware(['auth:customer', 'check.revoked'])->group(function () {
 
     // Profile
     Route::get('/profile', [CustomerAuthController::class, 'profile']);
@@ -29,6 +31,14 @@ Route::middleware('auth:customer')->group(function () {
 
     // Change Password
     Route::post('/change-password', [CustomerAuthController::class, 'changePassword']);
+
+    // Refresh Token
+    Route::post('/refresh-token', [CustomerAuthController::class, 'refreshToken']);
+
+    // Active Sessions & Remote Logout
+    Route::get('/active-sessions', [CustomerAuthController::class, 'activeSessions']);
+    Route::post('/revoke-session/{id}', [CustomerAuthController::class, 'revokeSession']);
+    Route::post('/revoke-all-other-sessions', [CustomerAuthController::class, 'revokeAllOtherSessions']);
 
     // Logout
     Route::post('/logout', [CustomerAuthController::class, 'logout']);
@@ -41,4 +51,7 @@ Route::middleware('auth:customer')->group(function () {
 
     // Security Dashboard
     Route::get('/security-dashboard', [DashboardController::class, 'security']);
+
+    // Analytics & Charts
+    Route::get('/analytics', [DashboardController::class, 'analytics']);
 });
