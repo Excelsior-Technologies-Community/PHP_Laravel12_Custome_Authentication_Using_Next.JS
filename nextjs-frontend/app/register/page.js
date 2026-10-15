@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { register } from "../../services/api";
+import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -167,6 +168,8 @@ export default function RegisterPage() {
                                 {errors.password[0]}
                             </small>
                         )}
+
+                        <PasswordStrengthMeter password={formData.password} />
                     </div>
 
                     <div style={{ marginBottom: "20px" }}>
